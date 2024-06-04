@@ -39,28 +39,37 @@ console.log('whichTruthy: ', whichTruthy);
 
 // 조건문, or , and, prompt, confirm 등을 사용해서 로직을 짜보자
 
-let userName = prompt('이름을 입력해주세요');
+function login() {
+  let userName = prompt('이름을 입력해주세요');
 
-if (userName?.toLowerCase() === 'admin') {
-  // admin
-  let userPassword = prompt('비밀번호를 입력해주세요');
-  if (userPassword?.toLowerCase() === 'themaster') {
-    // TheMaster
-    console.log('환영합니다!');
-  } else if (userPassword === null || userName.replace(/\s*/g, '') === '') {
-    // canceled
+  // username이 null, undefined면 아래 코드 실행 안함
+  // 함수를 강제로 중간지점에서 제어 return
+  if (userName === null || undefined) return;
+
+  if (userName?.toLowerCase() === 'admin') {
+    // admin
+    let userPassword = prompt('비밀번호를 입력해주세요');
+    if (userPassword?.toLowerCase() === 'themaster') {
+      // TheMaster
+      console.log('환영합니다!');
+    } else if (userPassword === null || userName.replace(/\s*/g, '') === '') {
+      // canceled
+      console.log('취소되었습니다.');
+    } else {
+      // other
+      console.log('비밀번호 잘못입력했습니다.');
+      login();
+    }
+  } else if (userName === null || userName?.replace(/\s*/g, '') === '') {
+    // cancel
     console.log('취소되었습니다.');
   } else {
     // other
-    console.log('인증에 실패하였습니다.');
+    console.log('i dont know you');
   }
-} else if (userName === null || userName?.replace(/\s*/g, '') === '') {
-  // cancel
-  console.log('취소되었습니다.');
-} else {
-  // other
-  console.log('i dont know you');
 }
+
+login();
 
 // userName.replace(/\s*/g,'') === ''
 // replace는 문자의 메서드
