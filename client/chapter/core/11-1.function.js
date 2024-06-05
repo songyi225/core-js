@@ -54,7 +54,7 @@ const result = calcPrice(1000, 3000);
 
 // rem(pxValue: number|string = 0 , base: number):string; -> 타입스크립트의 기능~
 
-function rem(pxValue, base = 16) {
+function rem(pxValue = 0, base = 16) {
 
   if (!pxValue) {
     throw new Error('rem 함수의 첫번째 인수는 필수 입력 값 입니다.');
@@ -84,7 +84,8 @@ rem('30px', 10) // 3rem
 
 
 // css(node: string, prop: string, value: number|strung) : string;
-let css;
+
+
 
 /* CASE1 :: 먼저 first 잡고 시작하는 방법
 const first = document.querySelector('.first');
@@ -122,6 +123,7 @@ function setStyle(node, prop, value) {
 setStyle('.first', 1234, 'blue');
 */
 
+const first = document.querySelector('.first');
 
 function setStyle(node, prop, value) {
   if (typeof node === 'string') {
@@ -135,10 +137,25 @@ function setStyle(node, prop, value) {
   }
   node.style[prop] = value;
 }
-setStyle('.first', 'color'); 
+setStyle('.first', 'color', 'blue'); 
 
 
+/* -------------------------------------------------------------------------- */
+/*                           스타일 속성을 가져오는 함수                             */
+/* -------------------------------------------------------------------------- */
 
+function getStyle(node, prop) {
+  if (typeof node === 'string') {
+    node = document.querySelector(node);
+  }
+  if (typeof prop !== 'string') {
+    throw new Error('getStyle 함수의 두번째 인수는 문자 타입이어야 합니다.');
+  }
+
+  return getComputedStyle(node)[prop];
+}
+
+getStyle('.first', 'backgroundColor') // 32px
 
 // node의 값을 'h1'으로 받았을 경우
 
@@ -156,3 +173,29 @@ setStyle('.first', 'color');
 // 2. h1의 폰트 사이즈를 가져온다.
 // 3. 증가함수와 감소함수를 만든다.
 // 4. 클릭 이벤트와 바인딩한다.
+
+
+function css(node, prop, value) {
+
+  /* if (!value) {
+    //getter
+    return getStyle(node, prop)
+  } else {
+    //setter
+    setStyle(node, prop, value)
+  } */
+
+  // 삼항식으로 바꾸면
+  return !value ? getStyle(node, prop) : setStyle(node, prop, value);
+
+}
+
+
+// const css2 = (node,prop,value) => !value ? getStyle(node,prop) : setStyle(node,prop,value);
+
+// css2('.first','color','red') // setter
+
+
+css('.first', 'color', 'red'); // setter
+css('.first', 'color'); // getter
+
