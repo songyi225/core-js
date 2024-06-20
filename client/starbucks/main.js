@@ -1,18 +1,14 @@
-const aList = document.querySelectorAll('nav a');
-const depthList = document.querySelectorAll('.depth');
-const header = document.querySelector('#header');
+/* global gsap */
 
-const h = (t) => (t.style.height = 0);
+const aList = document.querySelectorAll('nav a');
 
 aList.forEach((a) => {
-  a.addEventListener('mouseenter', () => {
-    const target = a.lastElementChild;
+  const target = a.lastElementChild;
 
-    depthList.forEach(h);
+  const tl = gsap
+    .timeline({ paused: true })
+    .to(target, { height: 100, ease: 'power3.inOut' });
 
-    // 모든 뎁스의 높이를 0으로 만들면 아래 줄이 실행되면서 내가 선택한 애만 높이를 가짐
-    target.style.height = '100px';
-  });
+  a.addEventListener('mouseenter', () => tl.play());
+  a.addEventListener('mouseleave', () => tl.reverse());
 });
-
-header.addEventListener('mouseleave', () => depthList.forEach(h));
