@@ -1,6 +1,13 @@
-/* -------------------------------------------------------------------------- */
-/*                                    class                                   */
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------- */
+/*                     class                    */
+/* -------------------------------------------- */
+
+/**
+ *
+ * @param {HTMLElement | string} node
+ * @param  {string | array | object} className
+ * @returns {void}
+ */
 
 function addClass(node, ...className) {
   if (typeof node === 'string') node = document.querySelector(node);
@@ -19,11 +26,6 @@ function addClass(node, ...className) {
     }
   });
 }
-
-/* addClass('.ground', ['a', 'b', 'c']);
-addClass('.ground', 'a', 'b', 'c');
-addClass('.ground', 'a,b,c');
-addClass('.ground', { a: 'one', b: 'two' }); */
 
 function removeClass(node, className) {
   if (typeof node === 'string') node = document.querySelector(node);
@@ -54,9 +56,9 @@ function toggleClass(node, className) {
   return node.classList.toggle(className);
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                    style                                   */
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------- */
+/*                     style                    */
+/* -------------------------------------------- */
 
 function getStyle(node, prop) {
   if (isString(node)) node = getNode(node);

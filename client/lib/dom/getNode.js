@@ -8,6 +8,8 @@ function getNode(node, context = document) {
   return context.querySelector(node);
 }
 
+getNode('.first');
+
 function getNodes(node, context = document) {
   if (context.nodeType !== 9) context = document.querySelector(context);
   return context.querySelectorAll(node);
