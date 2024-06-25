@@ -1,69 +1,75 @@
-import data from './data/data.js';
 import {
+  diceAnimation,
+  getNodes,
   getNode,
-  getRandom,
+  attr,
   insertLast,
+  endScroll,
   clearContents,
-  addClass,
-  removeClass,
-  showAlert,
-  shake,
-  copy,
 } from './lib/index.js';
-import { isNumericString } from './lib/utils/type.js';
 
-// [phase-1]
-// 1. 주접 떨기 버튼을 클릭 하는 함수
-//    - 주접 떨기 버튼 가져오기
-//    - 이벤트 연결하기 addEventListener('click')
+// 1. 주사위 애니메이션
+// 2. 주사위 굴리기 버튼을 클릭하면 diceAnimation()이 실행될 수 있도록
 
-// 2. input 값 가져오기
-//    - input.value
+const [rollingButton, recordButton, resetButton] = getNodes(
+  '.buttonGroup > button'
+);
+const recordListWrapper = getNode('.recordListWrapper');
 
-// 3. data함수에서 주접 1개 꺼내기
-//    - data(name)
-//    - getRandom()
+let count = 0;
+let total = 0;
 
-// 4. pick 항목 랜더링하기
-
-// [phase-2]
-// 1. 아무 값도 입력받지 못했을 때
-
-const submit = getNode('#submit');
-const nameField = getNode('#nameField');
-const result = getNode('.result');
-
-function handleSubmit(e) {
-  e.preventDefault();
-
-  const name = nameField.value;
-  const list = data(name);
-  const pick = list[getRandom(list.length)];
-
-  if (!name || name.replace(/\s*/g, '') === '') {
-    showAlert('.alert-error', '공백은 허용하지 않습니다.');
-    shake('#nameField').restart();
-    return;
-  }
-
-  if (!isNumericString(name)) {
-    showAlert('.alert-error', '제대로된 이름을 입력해주세요.');
-    shake('#nameField').restart();
-    return;
-  }
-
-  clearContents(result);
-  insertLast(result, pick);
+function createItem(value) {
+  const template = `
+  <tr>
+    <td>${++count}</td>
+    <td>${value}</td>
+    <td>${(total += value)}</td>
+  </tr>
+  `;
+  return template;
 }
 
-function handleCopy() {
-  const text = result.textContent;
-  if (nameField.value) {
-    copy(text).then(() => {
-      showAlert('.alert-success', '클립보드 복사 완료!');
-    });
-  }
+function renderRecordItem() {
+  // const diceValue = getNode('#cube').getAttribute('dice');
+  const diceValue = +attr(getNode('#cube'), 'dice');
+
+  insertLast('.recordList tbody', createItem(diceValue));
+  endScroll(recordListWrapper);
 }
 
-submit.addEventListener('click', handleSubmit);
-result.addEventListener('click', handleCopy);
+const handleRollingDice = (() => {
+  let isClicked = false;
+  let stopAnimation;
+
+  return () => {
+    if (!isClicked) {
+      stopAnimation = setInterval(diceAnimation, 100);
+      recordButton.disabled = true;
+      resetButton.disabled = true;
+    } else {
+      clearInterval(stopAnimation);
+      recordButton.disabled = false;
+      resetButton.disabled = false;
+    }
+
+    isClicked = !isClicked;
+  };
+})();
+
+function handleRecord() {
+  recordListWrapper.hidden = false;
+
+  renderRecordItem();
+}
+
+function handleReset() {
+  recordListWrapper.hidden = true;
+  clearContents('tbody');
+  count = 0;
+  total = 0;
+}
+
+rollingButton.addEventListener('click', handleRollingDice);
+recordButton.addEventListener('click', handleRecord);
+resetButton.addEventListener('click', handleReset);
