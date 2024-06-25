@@ -1,3 +1,6 @@
+import { getNode } from './getNode.js';
+import { isString } from '../utils/type.js';
+
 function getAttr(node, prop) {
   if (isString(node)) node = getNode(node);
   // if(typeof node === 'string') node = document.querySelector(node);
@@ -26,7 +29,6 @@ function setAttr(node, prop, value) {
     return;
   }
 
-  // prop에 data가 있어? 그럼 dataset으로 넣기
   if (prop.startsWith('data')) {
     prop = prop.slice(5);
     node.dataset[prop] = value;
@@ -49,5 +51,5 @@ function setAttr(node, prop, value) {
 //   }
 // }
 
-const attr = (node, prop, value) =>
+export const attr = (node, prop, value) =>
   !value ? getAttr(node, prop) : setAttr(node, prop, value);
