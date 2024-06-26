@@ -148,10 +148,41 @@ xhr.delete = (url, onSuccess, onFail) => {
 //   .then(() => {})
 //   .then(() => {});
 
-function xhrPromise(method, url, body) {
+const defaultOptions = {
+  method: 'GET',
+  url: '',
+  body: null,
+  errorMessage: '서버와의 통신이 원활하지 않습니다.',
+  headers: {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+  },
+};
+
+// enumerable => 열거 가능한 (for of, for in)
+// iterable   => 순환 가능한 (for of) -: 색 짖
+// immutable  => 불변의
+
+export function xhrPromise(options) {
+  const { method, url, body, headers, errorMessage } = {
+    ...defaultOptions,
+    ...options,
+    headers: {
+      ...defaultOptions.headers,
+      ...options.headers,
+    },
+  };
+
+  //console.log('xhr mixin config: ', config);
+  //const { method, url, body, headers, errorMessage } = config;
+
   const xhr = new XMLHttpRequest();
 
   xhr.open(method, url);
+
+  Object.entries(headers).forEach(([key, value]) => {
+    xhr.setRequestHeader(key, value);
+  }); // xhr.open 이후에 헤더를 설정해줘야함!!
 
   xhr.send(JSON.stringify(body));
 
@@ -169,7 +200,34 @@ function xhrPromise(method, url, body) {
     });
   });
 }
+xhrPromise.get = (url) => {
+  return xhrPromise({ url });
+};
 
-xhrPromise('GET', ENDPOINT, { name: 'tiger' }).then((res) => {
-  console.log(res);
-});
+xhrPromise.post = (url, body) => {
+  return xhrPromise({
+    url,
+    body,
+    method: 'POST',
+  });
+};
+
+xhrPromise.put = (url, body) => {
+  return xhrPromise({
+    url,
+    body,
+    method: 'PUT',
+  });
+};
+
+xhrPromise.delete = (url) => {
+  return xhrPromise({
+    url,
+    method: 'DELETE',
+  });
+};
+
+// xhrPromise.get = (url) => xhrPromise({ url });
+// xhrPromise.post = (url, body) => xhrPromise({ url, body, method: 'POST' });
+// xhrPromise.put = (url, body) => xhrPromise({ url, body, method: 'PUT' });
+// xhrPromise.delete = (url) => xhrPromise({ url, method: 'DELETE' });

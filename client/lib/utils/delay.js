@@ -1,5 +1,7 @@
 import { getNode } from '../dom/getNode.js';
 import { isNumber, isObject } from './type.js';
+import { xhrPromise } from './xhr.js';
+import { insertLast } from '../dom/insert.js';
 
 function delay(callback, timeout = 1000) {
   setTimeout(callback, timeout);
@@ -98,7 +100,7 @@ function delayP(options) {
     config = { ...defaultOptions, ...options };
   }
 
-  console.log(config);
+  // console.log('delay config:', config);
 
   // options과 defaultOptions이 mixin이 된 최종 형태가 config
   let { shouldRejected, data, errorMessage, timeout } = config;
@@ -116,3 +118,49 @@ function delayP(options) {
 
 // delayP(true, '성공!!', '알 수 없는 오류!', 1000);
 delayP(3000);
+
+/* -------------------------------------------------------------------------- */
+/*                                 async await                                */
+/* -------------------------------------------------------------------------- */
+
+async function delayA(data) {
+  const p = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve('성공!!');
+    }, 2000);
+  });
+
+  const result = await p;
+
+  console.log(result);
+
+  return;
+}
+
+async function 라면끓이기() {
+  const a = await delayP({ data: '물' });
+  console.log(a);
+
+  const b = await delayP({ data: '스프' });
+  console.log(b);
+
+  const c = await delayP({ data: '면' });
+  console.log(c);
+
+  const d = await delayP({ data: '그릇' });
+  console.log(d);
+}
+
+// 라면끓이기();
+
+async function getData() {
+  const data = await xhrPromise.get('https://pokeapi.co/api/v2/pokemon/172');
+  //console.log(data.sprites.other.showdown['front_default']);
+
+  insertLast(
+    document.body,
+    `<img src="${data.sprites.other.showdown['front_default']}" alt="" />`
+  );
+}
+
+getData();
