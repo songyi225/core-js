@@ -129,7 +129,7 @@ xhr.delete = (url, onSuccess, onFail) => {
 };
 
 // 사용할 때는 아래와 같이
-xhr.post(
+/* xhr.post(
   ENDPOINT,
   (data) => {
     console.log(data);
@@ -137,7 +137,7 @@ xhr.post(
   (err) => {
     console.log(err);
   }
-);
+); */
 
 /* -------------------------------------------------------------------------- */
 /*                               xhr의 promise 방식                              */
@@ -147,3 +147,29 @@ xhr.post(
 //   .post(ENDPOINT)
 //   .then(() => {})
 //   .then(() => {});
+
+function xhrPromise(method, url, body) {
+  const xhr = new XMLHttpRequest();
+
+  xhr.open(method, url);
+
+  xhr.send(JSON.stringify(body));
+
+  return new Promise((resolve, reject) => {
+    xhr.addEventListener('readystatechange', () => {
+      if (xhr.readyState === 4) {
+        if (xhr.status >= 200 && xhr.status < 400) {
+          // 성공
+          resolve(JSON.parse(xhr.response));
+        } else {
+          // 실패
+          reject({ message: '알 수 없는 오류' });
+        }
+      }
+    });
+  });
+}
+
+xhrPromise('GET', ENDPOINT, { name: 'tiger' }).then((res) => {
+  console.log(res);
+});
