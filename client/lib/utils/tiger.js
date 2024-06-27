@@ -1,7 +1,27 @@
 const ENDPOINT = 'https://jsonplaceholder.typicode.com/users';
 
-const tiger = async () => {
-  const response = await fetch(ENDPOINT);
+const defaultOptions = {
+  method: 'GET',
+  body: null,
+  headers: {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+  },
+};
+
+// fetch  => promise
+
+export const tiger = async (options) => {
+  const { url, ...restOptions } = {
+    ...defaultOptions,
+    ...options,
+    headers: {
+      ...defaultOptions.headers,
+      ...options.headers,
+    },
+  };
+
+  const response = await fetch(url, restOptions);
 
   if (response.ok) {
     response.data = await response.json();
@@ -10,12 +30,56 @@ const tiger = async () => {
   return response;
 };
 
-const response = await tiger();
-console.log('async: ', response.data);
+const result = await tiger({ url: ENDPOINT });
 
-/* 
+//console.log(result);
+
 // IIAFE
-(async function () {
-  // 이안에 모든 코드를 다 넣어서 써줘도됨
-})() 
-  */
+
+// (async function(){
+
+// })()
+
+tiger.get = (url, options) => {
+  return tiger({
+    url,
+    ...options,
+  });
+};
+
+// await tiger.get();
+
+tiger.post = (url, body, options) => {
+  return tiger({
+    method: 'POST',
+    url,
+    ...options,
+    body: JSON.stringify(body),
+  });
+};
+
+tiger.delete = (url, options) => {
+  return tiger({
+    method: 'DELETE',
+    url,
+    ...options,
+  });
+};
+
+tiger.put = (url, body, options) => {
+  return tiger({
+    method: 'PUT',
+    url,
+    ...options,
+    body: JSON.stringify(body),
+  });
+};
+
+tiger.patch = (url, body, options) => {
+  return tiger({
+    method: 'PATCH',
+    url,
+    ...options,
+    body: JSON.stringify(body),
+  });
+};
