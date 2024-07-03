@@ -1,37 +1,16 @@
-class Button extends HTMLElement {
+class UserCard extends HTMLElement {
   constructor() {
     super();
-
-    this.button = document.querySelector('button');
-  }
-
-  connectedCallback() {
-    this._render();
-  }
-
-  disconnectedCallback() {}
-
-  static get observedAttributes() {
-    return ['id'];
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue !== newValue) {
-      this._render();
-    }
-  }
-
-  _render() {
-    this.button.textContent = this.id;
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.innerHTML = `
+        <div> nickName : kind-tiger </div>
+        <slot name="username"></slot>
+        <slot name="age"></slot>
+        <slot name="gender"></slot>
+        <slot name="common"></slot>
+        <slot></slot>
+    `;
   }
 }
 
-customElements.define('c-button', Button);
-
-const c = document.querySelector('c-button');
-
-let count = 0;
-
-c.addEventListener('click', () => {
-  c.setAttribute('id', ++count);
-});
+customElements.define('user-card', UserCard);
