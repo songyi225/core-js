@@ -3,20 +3,23 @@ class UserCard extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = /* html */ `
-    <style>
-      :host{
-        background-color: orange;
-      }
-    </style>
-        <div> nickName : kind-tiger </div>
-        <slot name="username"></slot>
-        <slot name="age"></slot>
-        <slot name="gender"></slot>
-        <slot name="common"></slot>
-        <slot></slot>
-        <slot name ="email">any@naver.com</slot>
+    <button type="button">btn</button>
     `;
+    this.button = this.shadowRoot.querySelector('button');
+    console.log('this.button:', this.button);
+  }
+
+  connectedCallback() {
+    this.button.addEventListener('click', this.clickMe);
+  }
+
+  clickMe() {
+    console.log('Thank you!!!');
   }
 }
 
 customElements.define('user-card', UserCard);
+
+/* console.log(
+  document.querySelector('user-card').shadowRoot.querySelector('button')
+); */
